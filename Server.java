@@ -1,4 +1,4 @@
-package com.babich.echoserver.readerwriter;
+package com.babich.echoserver.inputoutput;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -6,17 +6,17 @@ import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) throws IOException {
-        try (ServerSocket server = new ServerSocket(3001);
-             Socket socket = server.accept();
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        ServerSocket serverSocket = new ServerSocket(3000);
+        Socket socket = serverSocket.accept();
 
-            String message = reader.readLine();
-            System.out.println("message from client: " + message);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
 
-            writer.write("echo: " + message);
-            writer.newLine();
-            writer.flush();
-        }
+        byte[] message = new byte[100];
+        int count = bufferedInputStream.read(message);
+        bufferedOutputStream.write("echo:".getBytes());
+        bufferedOutputStream.write(message);
     }
 }
+
+

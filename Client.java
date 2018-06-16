@@ -1,24 +1,22 @@
-package com.babich.echoserver.readerwriter;
+package com.babich.echoserver.inputoutput;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) throws IOException {
-        try (Scanner in = new Scanner(System.in);
-             Socket client = new Socket("localhost", 3001);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()))) {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        Socket socket = new Socket("localhost", 3000);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
 
-            String message = in.nextLine();
+        String message = bufferedReader.readLine();
+        bufferedOutputStream.write(message.getBytes());
+        bufferedOutputStream.flush();
 
-            writer.write(message);
-            writer.newLine();
-            writer.flush();
+        byte[] buffer = new byte[100];
+        int count = bufferedInputStream.read(buffer);
 
-            String line = reader.readLine();
-            System.out.println(line);
-        }
+        System.out.println(new String(buffer, 0, count));
     }
 }
